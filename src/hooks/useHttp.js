@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
+
+
 async function sendHttpRequest(url, config) {
     const response = await fetch(url, config)
     const resData = await response.json();
@@ -11,14 +13,21 @@ async function sendHttpRequest(url, config) {
 }
 
 export default function useHttp(url, config , initalData) {
+    
     const [data, setData] = useState(initalData);
     const [isLoading, setIsLoading] = useState();
     const [error, setError] = useState();
 
-    const sendRequest = useCallback(async function sendRequest() {
+
+    function clearData(){
+        setData(initalData)
+    }
+
+
+    const sendRequest = useCallback(async function sendRequest(data) {
         setIsLoading(true)
         try {
-            const resData = await sendHttpRequest(url, config);
+            const resData = await sendHttpRequest(url, {...config, body: data });
             setData(resData)
         }
         catch (error) {
@@ -38,6 +47,7 @@ export default function useHttp(url, config , initalData) {
         data,
         isLoading,
         error,
-        sendRequest
+        sendRequest,
+        clearData
     }
 }
