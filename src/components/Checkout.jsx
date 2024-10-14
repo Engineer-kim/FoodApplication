@@ -15,17 +15,37 @@ export default function Checkout() {
         0
     )
 
-    function handleClose(){
+    function handleClose() {
         userProgressCtx.hideCheckout();
     }
 
+    function handleSubmit(event) {
+        event.preventDefault()  //새로고침 방지
+
+        const fd = new FormData(event.target)
+        const customerData = Object.fromEntries(fd.entries()) // {email : ettes@naver.com }
+
+        fetch('http://localhost:3000/orders' , {
+            method: 'POST',
+            headers:{
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                order: {
+                    items: cartCtx.items,
+                    customer: customerData
+                }
+            })
+        })
+    }
 
     return <Modal open={userProgressCtx.progress === 'checkout'} onClose={handleClose}>
-        <form>
+        <form onSubmit={handleSubmit}>
             <h2>CheckOut</h2>
             <p> Total Amount: {currencyFormatter.format(cartTotal)}</p>
-            <Input label="FullName" type="text" id="full-name"></Input>
+            <Input label="FullName" type="text" id="name"></Input>
             <Input label="E-mail" type="email" id="email"></Input>
+            <Input label="Street" type="text" id="street"></Input>
             <div className="control-row">
                 <Input label="PostalCode" type="text" id="postal-code"></Input>
                 <Input label="City" type="text" id="city"></Input>
